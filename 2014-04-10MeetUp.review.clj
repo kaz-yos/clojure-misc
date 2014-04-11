@@ -17,7 +17,6 @@
 
 
 ;;; Q 33
-
 ;; 4Clojure Question 33
 ;;
 ;; Write a function which replicates each element of a sequence a variable number of times.
@@ -41,7 +40,6 @@
 
 
 ;;; Q 38
-
 ;; 4Clojure Question 38
 ;;
 ;; Write a function which takes a variable number of parameters and returns the maximum value.
@@ -64,7 +62,6 @@
 
 
 ;;; Q 77
-
 ;; 4Clojure Question 77
 ;;
 ;; Write a function which finds all the anagrams in a vector of words.  A word x is an anagram of word y if all the letters in x can be rearranged in a different order to form y.  Your function should return a set of sets, where each sub-set is a group of words which are anagrams of each other.  Each sub-set should have at least two words.  Words without any anagrams should not be included in the result.
@@ -92,8 +89,44 @@
    #{#{"veer" "ever"} #{"lake" "kale"} #{"mite" "item"}})
 
 
-;;; Q110
 
+;;; Q102
+;; 4Clojure Question 102
+;;
+;; When working with java, you often need to create an object with <code>fieldsLikeThis</code>, but you'd rather work with a hashmap that has <code>:keys-like-this</code> until it's time to convert. Write a function which takes lower-case hyphen-separated strings and converts them to camel-case strings.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(clojure.string/split "kazuki yoshida" #" ")
+
+## Import
+(require '[clojure.string :as cstr])
+(cstr/split "kazuki yoshida" #" ")
+
+
+(defn __ [st]
+  (let [seq-st (cstr/split st #"-")]
+    (apply str
+           (first seq-st)
+           (map cstr/capitalize (rest seq-st)))))
+
+;; Last element is opened up.
+(apply str "kazuki" ["_a" "_b" "_c"] )
+
+(= (__ "something") "something")
+(= (__ "multi-word-key") "multiWordKey")
+(= (__ "leaveMeAlone") "leaveMeAlone")
+
+;; last/second takes the letter after -
+(#(clojure.string/replace % #"-[a-z]" (comp clojure.string/upper-case last)) "multi-word-key")
+(#(clojure.string/replace % #"-[a-z]" (comp clojure.string/upper-case second)) "multi-word-key")
+
+;; \w matches a letter?
+(#(clojure.string/replace % #"-\w" (comp clojure.string/upper-case second)) "multi-word-key")
+
+
+
+;;; Q110
 ;; 4Clojure Question 110
 ;;
 ;; <p>Write a function that returns a lazy sequence of "pronunciations" of a sequence of numbers. A pronunciation of each element in the sequence consists of the number of repeating identical numbers and the number itself. For example, <code>[1 1]</code> is pronounced as <code>[2 1]</code> ("two ones"), which in turn is pronounced as <code>[1 2 1 1]</code> ("one two, one one").</p><p>Your function should accept an initial sequence of numbers, and return an infinite lazy sequence of pronunciations, each element being a pronunciation of the previous element.</p>
