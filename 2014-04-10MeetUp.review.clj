@@ -99,7 +99,7 @@
 
 (clojure.string/split "kazuki yoshida" #" ")
 
-## Import
+;; Import
 (require '[clojure.string :as cstr])
 (cstr/split "kazuki yoshida" #" ")
 
@@ -116,6 +116,8 @@
 (= (__ "something") "something")
 (= (__ "multi-word-key") "multiWordKey")
 (= (__ "leaveMeAlone") "leaveMeAlone")
+
+(cstr/upper-case "kazuki")
 
 ;; last/second takes the letter after -
 (#(clojure.string/replace % #"-[a-z]" (comp clojure.string/upper-case last)) "multi-word-key")
