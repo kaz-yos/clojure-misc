@@ -704,11 +704,47 @@
 ;;
 ;; Use M-x 4clojure-check-answers when you're done!
 
-(def __ [a b]
-  ((* a b)))
+(defn __ [a b]
+  (map read-string (clojure.string/split (str (* a b)) #"")))
+
+(defn __ [a b]
+  (clojure.string/split (str (* a b)) #""))
+
+(defn __ [a b]
+  (map #(. Integer parseInt %) (clojure.string/split (str (* a b)) #"")))
+
+
+;; (defn __ [a b]
+;;   (map read-string (re-seq #"[\d.]+" (clojure.string/split (str (* a b)) #""))))
 
 (= (__ 1 1) [1])
 (= (__ 99 9) [8 9 1])
 (= (__ 999 99) [9 8 9 0 1])
 
 
+;; http://stackoverflow.com/questions/2640169/whats-the-easiest-way-to-parse-numbers-in-clojure
+(let [input "5  10  0.002\n4  12  0.003"]
+        (re-seq #"[\d.]+" input))
+(let [input "5  10  0.002\n4  12  0.003"]
+        (map read-string (re-seq #"[\d.]+" input)))
+
+
+;; 4Clojure Question 90
+;;
+;; Write a function which calculates the <a href="http://en.wikipedia.org/wiki/Cartesian_product"> Cartesian product</a> of two sets.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+;; (defn __ [a b]
+;;   )
+
+(= (__ #{"ace" "king" "queen"} #{"&#9824;" "&#9829;" "&#9830;" "&#9827;"})
+   #{["ace"   "&#9824;"] ["ace"   "&#9829;"] ["ace"   "&#9830;"] ["ace"   "&#9827;"]
+     ["king"  "&#9824;"] ["king"  "&#9829;"] ["king"  "&#9830;"] ["king"  "&#9827;"]
+     ["queen" "&#9824;"] ["queen" "&#9829;"] ["queen" "&#9830;"] ["queen" "&#9827;"]})
+
+(= (__ #{1 2 3} #{4 5})
+   #{[1 4] [2 4] [3 4] [1 5] [2 5] [3 5]})
+
+(= 300 (count (__ (into #{} (range 10))
+                  (into #{} (range 30)))))
