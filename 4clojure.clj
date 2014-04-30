@@ -909,3 +909,30 @@
 (= (__ #{:a :b :c} #{}) #{:a :b :c})
 (= (__ #{} #{4 5 6}) #{4 5 6})
 (= (__ #{[1 2] [2 3]} #{[2 3] [3 4]}) #{[1 2] [3 4]})
+
+
+
+
+;; 4Clojure Question 143
+;;
+;; Create a function that computes the <a href="http://en.wikipedia.org/wiki/Dot_product#Definition">dot product</a> of two sequences. You may assume that the vectors will have the same length.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(defn __ [x y]
+  (apply + (map #(apply * %) (partition-all 2 (interleave x y)))))
+
+;; map can take multiple collections!!
+(map * [1 2 3] [4 5 6])
+
+(defn __ [x y]
+  (apply + (map * x y)))
+
+(= 0 (__ [0 1 0] [1 0 0]))
+(= 3 (__ [1 1 1] [1 1 1]))
+(= 32 (__ [1 2 3] [4 5 6]))
+(= 256 (__ [2 5 6] [100 10 1]))
+
+
+
+
