@@ -762,10 +762,52 @@
 (defn __ [f s]
   (group-by f s))
 
+(defn __ [f s]
+  (let [ks (map f s)
+        vs s]
 
+    (interleave ks vs)))
+
+(__ #(> % 5) [1 3 6 8])
+
+
+(defn __ [f s]
+  (let [ks (map f s)
+        vs s]
+
+    (partition 2 (interleave ks vs))))
+
+(__ #(> % 5) [1 3 6 8])
+
+
+(defn __ [f s]
+  (let [ks (map f s)]
+
+    (map (fn [x] (zipmap [(first x)] [(last x)])) (partition 2 (interleave ks s)))))
+
+(__ #(> % 5) [1 3 6 8])
+(__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
+
+
+(apply merge-with vector '({false 1} {false 3} {true 6} {true 8}))
+
+(apply merge-with vector '(([1/2] [[1 2]]) ([1/2] [[2 4]]) ([2/3] [[4 6]]) ([1/2] [[3 6]])))
+
+(defn __ [f s]
+  (let [ks (map f s)]
+
+    (apply merge-with vector
+           (map (fn [x] (zipmap [(first x)] [(last x)])) (partition 2 (interleave ks s))))))
+
+(__ #(> % 5) [1 3 6 8])
+(__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
 
 (= (__ #(> % 5) [1 3 6 8]) {false [1 3], true [6 8]})
 (= (__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
    {1/2 [[1 2] [2 4] [3 6]], 2/3 [[4 6]]})
 (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
    {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]})
+
+
+
+
