@@ -1,7 +1,7 @@
 ;;; https://www.4clojure.com
 
 ;;; Intro to vectors
-(= [:a :b :c] (list :a :b :c) (vec '(:a :b :c)) (vector :a :b :c)) 
+(= [:a :b :c] (list :a :b :c) (vec '(:a :b :c)) (vector :a :b :c))
 
 
 ;;; https://www.4clojure.com/problem/71
@@ -82,7 +82,7 @@
 ;; Use M-x 4clojure-check-answers when you're done!
 (some #{2 7 6} [5 6 7 8])
 
-;; Using a set 
+;; Using a set
 (= __ (some #{2 7 6} [5 6 7 8]))
 (= __ (some #(when (even? %) %) [5 6 7 8]))
 
@@ -194,7 +194,7 @@
 ;; Use M-x 4clojure-check-answers when you're done!
 
 (defn __ [a b]
-  ;; Stop if either is empty, 
+  ;; Stop if either is empty,
   (if (= 0 (min (count a) (count b)))
     ;; and return an empty vector
     []
@@ -445,7 +445,7 @@
       true
       false)))
 
-;; identity do the 
+;; identity do the
 (defn __ [& rest]
   (if (every? identity rest)
     false
@@ -528,7 +528,7 @@
 ;;
 ;; For any orderable data type it's possible to derive all of the basic comparison operations (&lt;, &le;, =, &ne;, &ge;, and &gt;) from a single operation (any operator but = or &ne; will work). Write a function that takes three arguments, a <var>less than</var> operator for the data and two items to compare. The function should return a keyword describing the relationship between the two items. The keywords for the relationship between <var>x</var> and <var>y</var> are as follows:
 ;;
-;; 
+;;
 ;;
 ;; <ul>
 ;;
@@ -671,7 +671,7 @@
 ;;
 ;; <p>Lexical scope and first-class functions are two of the most basic building blocks of a functional language like Clojure. When you combine the two together, you get something very powerful called <strong>lexical closures</strong>. With these, you can exercise a great deal of control over the lifetime of your local bindings, saving their values for use later, long after the code you're running now has finished.</p>
 ;;
-;; 
+;;
 ;;
 ;; <p>It can be hard to follow in the abstract, so let's build a simple closure. Given a positive integer <i>n</i>, return a function <code>(f x)</code> which computes <i>x<sup>n</sup></i>. Observe that the effect of this is to preserve the value of <i>n</i> for use outside the scope in which it is defined.</p>
 ;;
@@ -954,7 +954,7 @@
      (map (fn [elt]
             (apply +
              (map #(* % %) (map read-string (clojure.string/split (str elt) #""))))
-            
+
             )))
 
 (->> (range 30)
@@ -988,3 +988,78 @@
 (= 19 (__ (range 30)))
 (= 50 (__ (range 100)))
 (= 50 (__ (range 1000)))
+
+
+
+;; 4Clojure Question 100
+;;
+;; Write a function which calculates the <a href="http://en.wikipedia.org/wiki/Least_common_multiple">least common multiple</a>.  Your function should accept a variable number of positive integers or ratios.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(defn __ [a b]
+  (let [infseq (iterate inc 1)
+        rem-a (rem infseq a)
+        rem-b (rem infseq b)]
+
+    (filter (fn [x] (and (= 0 rem-a)
+                         (= 0 rem-b)))
+            infseq)
+    ))
+
+
+(defn __ [a b]
+  (let [infseq (iterate inc 1)]
+
+    (filter (fn [x] (and (integer? (/ x a))
+                         (integer? (/ x b))))
+            infseq)
+    ))
+(__ 2 3)
+
+(defn __ [& rest]
+  (let [infseq (iterate inc 1)]
+
+    (filter (fn [x] (every?
+                     #(integer? (/ x %))
+                     rest
+                     ))
+            infseq)
+    ))
+(__ 2 3)
+(__ 5 3 7)
+
+(defn __ [& rest]
+  (let [inf-s (iterate inc 1)]
+
+    (first (filter (fn [x] (every?
+                            #(integer? (/ x %))
+                            rest
+                            ))
+                   inf-s))
+    ))
+(__ 2 3)
+(__ 5 3 7)
+(__ 3/4 1/6)
+
+
+(defn __ [& rest]
+  (let [inf-s (iterate inc 1)
+        ans (first (filter (fn [x] (every?
+                            #(integer? (/ x %))
+                            rest
+                            ))
+                   inf-s))]
+
+    (map #(/ inf-s %) (map #(/ ans %) rest))
+    
+    ))
+(__ 2 3)
+(__ 5 3 7)
+(__ 3/4 1/6)
+
+(== (__ 2 3) 6)
+(== (__ 5 3 7) 105)
+(== (__ 1/3 2/5) 2)
+(== (__ 3/4 1/6) 3/2)
+(== (__ 7 5/7 2 3/5) 210)
