@@ -713,9 +713,9 @@
 (defn __ [a b]
   (map #(. Integer parseInt %) (clojure.string/split (str (* a b)) #"")))
 
-
-;; (defn __ [a b]
-;;   (map read-string (re-seq #"[\d.]+" (clojure.string/split (str (* a b)) #""))))
+;; use read-string to evaluate "1"
+(defn __ [a b]
+  (vec (map read-string (clojure.string/split (str (* a b)) #""))))
 
 (= (__ 1 1) [1])
 (= (__ 99 9) [8 9 1])
@@ -875,3 +875,37 @@
 (= 255   (__ "11111111"))
 (= 1365  (__ "10101010101"))
 (= 65535 (__ "1111111111111111"))
+
+
+
+
+;; 4Clojure Question 88
+;;
+;; Write a function which returns the symmetric difference of two sets.  The symmetric difference is the set of items belonging to one but not both of the two sets.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(defn __ [a b]
+  (let [intrsct (clojure.set/intersection a b)]
+
+    (clojure.set/union (clojure.set/difference a intrsct)
+                       (clojure.set/difference b intrsct))
+    ))
+
+(set (concat #{1 2 3 4 5 6} #{1 3 5 7}))
+
+;; clojure.core/disj
+;; ([set] [set key] [set key & ks])
+;;   disj[oin]. Returns a new set of the same (hashed/sorted) type, that
+;;   does not contain key(s).
+(defn __ [a b]
+  (clojure.set/union (apply disj a b) (apply disj b a)))
+;; (apply disj a b)     ; b is opened up
+
+(defn __ [a b]
+  (clojure.set/difference (set (concat a b)) (clojure.set/intersection a b)))
+
+(= (__ #{1 2 3 4 5 6} #{1 3 5 7}) #{2 4 6 7})
+(= (__ #{:a :b :c} #{}) #{:a :b :c})
+(= (__ #{} #{4 5 6}) #{4 5 6})
+(= (__ #{[1 2] [2 3]} #{[2 3] [3 4]}) #{[1 2] [3 4]})
