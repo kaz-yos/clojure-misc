@@ -1045,15 +1045,25 @@
 
 (defn __ [& rest]
   (let [inf-s (iterate inc 1)
-        ans (first (filter (fn [x] (every?
-                            #(integer? (/ x %))
+        ]
+
+    (first (filter (fn [x] (every?
+                            #(= 0 (rem x %))
                             rest
                             ))
-                   inf-s))]
-
-    (map #(/ inf-s %) (map #(/ ans %) rest))
-    
+                   inf-s))
     ))
+
+;; this is not looking for 3/2
+(filter (fn [x] (every?
+                 #(= 0 (rem x %))
+                 [3/4 1/6]
+                 ))
+        (iterate inc 1))
+(rem 3/2 3/4)
+(denominator 3/2)
+(denominator 5)
+
 (__ 2 3)
 (__ 5 3 7)
 (__ 3/4 1/6)
@@ -1063,3 +1073,94 @@
 (== (__ 1/3 2/5) 2)
 (== (__ 3/4 1/6) 3/2)
 (== (__ 7 5/7 2 3/5) 210)
+
+
+
+
+;; 4Clojure Question 44
+;;
+;; Write a function which can rotate a sequence in either direction.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(defn __ [n s]
+  (for [n (range n)]
+    (conj (last s) (rest s))
+    ))
+
+(defn __ [n sq]
+  (loop [s sq
+         i 1]
+    (if (> i n)
+      s
+      (recur (cons (last s) (butlast s)) (inc i)))
+    ))
+
+(defn __ [n sq]
+  (loop [s sq
+         i 1]
+    (if (> i n)
+      s
+      (recur (conj (vec (rest s)) (first s)) (inc i)))
+    ))
+(__ 2 [1 2 3 4 5])
+(__ 6 [1 2 3 4 5])
+
+(defn __ [n sq]
+  (loop [s sq
+         i 0]
+    (if (= i n)
+      s
+      (recur (conj (vec (rest s)) (first s)) (inc i)))
+    ))
+(__ 2 [1 2 3 4 5])
+(__ 6 [1 2 3 4 5])
+
+(defn __ [n sq]
+  (loop [s sq
+         i 0]
+    (cond 
+     (n > 0) (if (= i n)
+               s
+               (recur (conj (vec (rest s)) (first s)) (inc i)))
+
+     (n < 0) (if (= i n)
+               s
+               (recur (cons (last s) (butlast s)) (dec i)))
+     
+     :else s)
+    ))
+
+
+(defn __ [n sq]
+  (loop [s (if (>= n 0) sq (reverse sq))
+         i 0]
+
+    (if (= i (if (>= n 0) n (* -1 n)))
+
+      ;; return result
+      (if (>= n 0) s (reverse s))
+
+      ;; recur
+      (recur (conj (vec (rest s)) (first s)) (inc i)))
+    ))
+
+;;
+(mod 2 5)
+(mod -2 5)
+(defn __ [n sq] (let [n (mod n (count sq))]
+                  (concat (drop n sq)
+                          (take n sq)
+                          )))
+
+(__ 2 [1 2 3 4 5])      ; take 2
+(__ -2 [1 2 3 4 5])     ; take 3
+(__ 6 [1 2 3 4 5])      ; take 1
+
+(= (__ 2 [1 2 3 4 5]) '(3 4 5 1 2))
+(= (__ -2 [1 2 3 4 5]) '(4 5 1 2 3))
+(= (__ 6 [1 2 3 4 5]) '(2 3 4 5 1))
+(= (__ 1 '(:a :b :c)) '(:b :c :a))
+(= (__ -4 '(:a :b :c)) '(:c :a :b))
+
+
