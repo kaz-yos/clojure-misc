@@ -790,8 +790,15 @@
 
 
 (apply merge-with vector '({false 1} {false 3} {true 6} {true 8}))
+(apply merge-with list '({1/2 [1 2]} {1/2 [2 4]} {2/3 [4 6]} {1/2 [3 6]}))
 
-(apply merge-with vector '(([1/2] [[1 2]]) ([1/2] [[2 4]]) ([2/3] [[4 6]]) ([1/2] [[3 6]])))
+(vals (apply merge-with list '({1/2 [1 2]} {1/2 [2 4]} {2/3 [4 6]} {1/2 [3 6]})))
+
+'({1/2 [1 2]} {1/2 [2 4]} {2/3 [4 6]} {1/2 [3 6]})
+
+(partition-by (fn [x] (keys x)) '({1/2 [1 2]} {1/2 [2 4]} {2/3 [4 6]} {1/2 [3 6]}))
+
+(into [] '(1 2 3 4))
 
 (defn __ [f s]
   (let [ks (map f s)]
@@ -799,8 +806,21 @@
     (apply merge-with vector
            (map (fn [x] (zipmap [(first x)] [(last x)])) (partition 2 (interleave ks s))))))
 
+(defn __ [f s]
+  (let [ks (map f s)]
+
+    (apply merge-with (fn [x y] (conj [x] y))
+           (map (fn [x] (zipmap [(first x)] [(last x)])) (partition 2 (interleave ks s))))))
+
 (__ #(> % 5) [1 3 6 8])
 (__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
+
+(map (fn [x] {(key x) (val x)}) {2/3 [4 6], 1/2 [[[1 2] [2 4]] [3 6]]})
+
+(map (fn [x] {(key x)
+              (val x)})
+     {2/3 [4 6], 1/2 [[[1 2] [2 4]] [3 6]]})
+
 
 (= (__ #(> % 5) [1 3 6 8]) {false [1 3], true [6 8]})
 (= (__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
@@ -811,3 +831,47 @@
 
 
 
+;; 4Clojure Question 122
+;;
+;; Convert a binary number, provided in the form of a string, to its numerical value.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(defn __ [s]
+  (let [a (map #(if (= "1" %) 1 0) (clojure.string/split s #""))
+        b (iterate (fn [x] (* 2 x)) 1)]
+
+    (->> (interleave a b                )
+         (partition-all 2               )
+         (map (fn [x] (apply * x))      )
+         (apply +)
+         )
+    )
+  )
+
+(__ "1001")
+(map (fn [x] (apply * x)) '((1 1) (0 2) (0 4) (1 8)))
+(apply + (map (fn [x] (apply * x)) '((1 1) (0 2) (0 4) (1 8))))
+
+
+;; clean
+(defn __ [s]
+  (let [a (map #(if (= "1" %) 1 0) (clojure.string/split s #""))
+        a (reverse a)
+        b (iterate (fn [x] (* 2 x)) 1)]
+
+    (->> (interleave a b                )
+         (partition-all 2               )
+         (map (fn [x] (apply * x))      )
+         (apply +                       ))))
+
+;; Integer/parseInt is good
+(Integer/parseInt "110" 2)
+
+(= 0     (__ "0"))
+(= 7     (__ "111"))
+(= 8     (__ "1000"))
+(= 9     (__ "1001"))
+(= 255   (__ "11111111"))
+(= 1365  (__ "10101010101"))
+(= 65535 (__ "1111111111111111"))
