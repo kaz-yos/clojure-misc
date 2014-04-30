@@ -936,3 +936,55 @@
 
 
 
+;; 4Clojure Question 120
+;;
+;; Write a function which takes a collection of integers as an argument.  Return the count of how many elements are smaller than the sum of their squared component digits.  For example: 10 is larger than 1 squared plus 0 squared; whereas 15 is smaller than 1 squared plus 5 squared.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(map read-string (map clojure.string/split (map str (range 30)) #""))
+
+(->> (range 30)
+     (map (fn [elt]
+            (map #(* % %) (map read-string (clojure.string/split (str elt) #"")))
+            )))
+
+
+(->> (range 30)
+     (map (fn [elt]
+            (apply +
+             (map #(* % %) (map read-string (clojure.string/split (str elt) #""))))
+            
+            )))
+
+(->> (range 30)
+     (map
+      (fn [elt]
+        (->> (clojure.string/split (str elt) #"")
+             (map read-string )
+             (map #(* % %)    )
+             (apply +         ))
+        )
+      ))
+
+
+
+
+(defn __ [s]
+  (count (filter
+          (fn [elt]
+            (->> (clojure.string/split (str elt) #"")
+                 (map   read-string   ) ; read-string does not work in 4clojure?
+                 (map   #(* % %)      )
+                 (apply +             )
+                 (<     elt           )
+                 )
+            )
+          s)
+         )
+  )
+
+(= 8 (__ (range 10)))
+(= 19 (__ (range 30)))
+(= 50 (__ (range 100)))
+(= 50 (__ (range 1000)))
