@@ -713,6 +713,15 @@
 (defn __ [a b]
   (map #(. Integer parseInt %) (clojure.string/split (str (* a b)) #"")))
 
+(defn __ [a b]
+  (map #(Integer/parseInt %) (clojure.string/split (str (* a b)) #"")))
+
+;; create number as a string, map the letters, covert each letter to string and back to interger.
+(fn __ [a b]
+  (map #(Integer/parseInt (str %))  (str (* a b))))
+
+
+
 ;; use read-string to evaluate "1"
 (defn __ [a b]
   (vec (map read-string (clojure.string/split (str (* a b)) #""))))
@@ -736,7 +745,15 @@
 ;; Use M-x 4clojure-check-answers when you're done!
 
 (defn __ [a b]
-  )
+  (set (mapcat (fn [x]
+                 (map (fn [y] [x y])
+                      b))
+               a)))
+
+(defn __ [x1 x2]
+  (set (for [i1 x1 i2 x2]       ; this does all possible combinations
+         [i1 i2])))
+
 
 (= (__ #{"ace" "king" "queen"} #{"&#9824;" "&#9829;" "&#9830;" "&#9827;"})
    #{["ace"   "&#9824;"] ["ace"   "&#9829;"] ["ace"   "&#9830;"] ["ace"   "&#9827;"]
@@ -1164,3 +1181,122 @@
 (= (__ -4 '(:a :b :c)) '(:c :a :b))
 
 
+
+
+;; 4Clojure Question 173
+;;
+;; Sequential destructuring allows you to bind symbols to parts of sequential things (vectors, lists, seqs, etc.): <a href="http://clojure.org/special_forms#Special Forms--(let [bindings* ] exprs*)">(let [bindings* ] exprs*)</a>
+;;
+;; 
+;;
+;; Complete the bindings so all let-parts evaluate to 3.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(= 3
+   (let [[f s] [+ (range 3)]]
+     (apply f s))
+   
+   (let [[[f s] b] [[+ 1] 2]]
+     (f s b))
+   
+   (let [[f s] [inc 2]]
+     (f s)))
+
+
+
+;; 4Clojure Question 50
+;;
+;; Write a function which takes a sequence consisting of items with different types and splits them up into a set of homogeneous sub-sequences. The internal order of each sub-sequence should be maintained, but the sub-sequences themselves can be returned in any order (this is why 'set' is used in the test cases).
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(defn __ [s]
+  (group-by class s))
+(set (__ [1 :a 2 :b 3 :c]))
+
+(defn __ [s]
+  (group-by type s))
+(set (__ [1 :a 2 :b 3 :c]))
+
+(defn __ [s]
+  (vals (group-by class s)))
+
+(= (set (__ [1 :a 2 :b 3 :c])) #{[1 2 3] [:a :b :c]})
+(= (set (__ [:a "foo"  "bar" :b])) #{[:a :b] ["foo" "bar"]})
+(= (set (__ [[1 2] :a [3 4] 5 6 :b])) #{[[1 2] [3 4]] [:a :b] [5 6]})
+
+
+
+;; 4Clojure Question 54
+;;
+;; Write a function which returns a sequence of lists of x items each.  Lists of less than x items should not be returned.
+;;
+;; Restrictions (please don't use these function(s)): partition, partition-all
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(defn __ [n coll]
+  (if (< (count coll) n)
+      []
+      (cons (take n coll) (__ n (drop n coll)))) )
+
+
+(= (__ 3 (range 9)) '((0 1 2) (3 4 5) (6 7 8)))
+(= (__ 2 (range 8)) '((0 1) (2 3) (4 5) (6 7)))
+(= (__ 3 (range 8)) '((0 1 2) (3 4 5)))
+
+
+
+
+;; 4Clojure Question 43
+;;
+;; Write a function which reverses the interleave process into x number of subsequences.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(mapcat identity (repeat (range 3)))
+
+(defn __ [coll n]
+  (interleave (mapcat identity (repeat (range n))) coll)
+  )
+(__ [1 2 3 4 5 6] 2)
+'(0 1 1 2 0 3 1 4 0 5 1 6)
+
+(defn __ [coll n]
+  (group-by first (partition-all 2 (interleave (mapcat identity (repeat (range n))) coll)))
+  )
+(__ [1 2 3 4 5 6] 2)
+'{0 [(0 1) (0 3) (0 5)], 1 [(1 2) (1 4) (1 6)]}
+
+(defn __ [coll n]
+  (vals (group-by first (partition-all 2 (interleave (mapcat identity (repeat (range n))) coll))))
+  )
+(__ [1 2 3 4 5 6] 2)
+
+
+(defn __ [coll n]
+  (->> (range n)                ; thread this through the last argument
+       (repeat                )
+       (mapcat identity       )
+       (#(interleave % coll)  ) ; thread through the first argument for this function
+       (partition-all 2       )
+       (group-by first        )
+       (vals                  )
+       (map #(map second %)   )
+       )
+  )
+(__ [1 2 3 4 5 6] 2)
+
+
+(map identity '([(0 1) (0 3) (0 5)] [(1 2) (1 4) (1 6)]))
+(map (fn [v] (map second v)) '([(0 1) (0 3) (0 5)] [(1 2) (1 4) (1 6)]))
+
+
+(defn __ [coll n]
+  (map #(mapcat second %) (vals (group-by first (partition-all 2 (interleave (mapcat identity (repeat (range n))) coll)))))
+  )
+
+(= (__ [1 2 3 4 5 6] 2) '((1 3 5) (2 4 6)))
+(= (__ (range 9) 3) '((0 3 6) (1 4 7) (2 5 8)))
+(= (__ (range 10) 5) '((0 5) (1 6) (2 7) (3 8) (4 9)))
