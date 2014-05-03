@@ -78,7 +78,6 @@
       (def seq (rest seq))
       (recur ((+ count 1))))))
 
-
 (defn fib-even-sum [upto]
   (loop [previous 1 nxt 1 sum 0]
     (if (or (<= upto 1) (>= nxt upto))
@@ -86,3 +85,6 @@
     (if (= (mod nxt 2) 0)
        (recur nxt (+ previous nxt) (+ sum nxt))
        (recur nxt (+ previous nxt) sum))))
+
+;;
+;;

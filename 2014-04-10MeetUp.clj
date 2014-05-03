@@ -86,12 +86,23 @@
 
 (= (__ ["meat" "mat" "team" "mate" "eat"])
    #{#{"meat" "team" "mate"}})
-
 (= (__ ["veer" "lake" "item" "kale" "mite" "ever"])
    #{#{"veer" "ever"} #{"lake" "kale"} #{"mite" "item"}})
 
 
 #(->> % (group-by sort) vals (filter next) (map set) set)
+
+
+
+;; 4Clojure Question 102
+;;
+;; When working with java, you often need to create an object with <code>fieldsLikeThis</code>, but you'd rather work with a hashmap that has <code>:keys-like-this</code> until it's time to convert. Write a function which takes lower-case hyphen-separated strings and converts them to camel-case strings.
+;;
+;; Use M-x 4clojure-check-answers when you're done!
+
+(= (__ "something") "something")
+(= (__ "multi-word-key") "multiWordKey")
+(= (__ "leaveMeAlone") "leaveMeAlone")
 
 
 
