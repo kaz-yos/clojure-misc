@@ -24,7 +24,8 @@
 ;;
 ;; (defn max-dup-str [st]
 ;;   :str)
-;;
+
+;; Obtain all possible suffixes
 (defn suffixes [st]
   (let [st-seq (seq st)]
     (loop [acc []
@@ -35,18 +36,23 @@
         (recur (conj acc sseq) (rest sseq))))))
 ;;
 (suffixes "mississippi")
-;;
+
+;; Sort suffixes
 (defn sorted-suffixes [st]
   (sort (map (fn [sseq] (clojure.string/join sseq)) (suffixes st))))
 ;;
 (sorted-suffixes "mississippi")
-;;
+
+;; Create pairs of neighboring suffixes
+;; juxtaposing with the elements of the (rest xs) is the common way
 (defn pairs [st]
   (let [sorted-suff (sorted-suffixes st)]
     (partition-all 2 (interleave sorted-suff (rest sorted-suff)))))
 ;;
 (pairs "mississippi")
-;;
+
+;; For a pair, calculate the length of match
+;; loop macro solution
 (defn match-length [[a b]]
   (loop [acc 0
          ssta (seq a)
@@ -56,9 +62,16 @@
      (not= (first ssta) (first sstb)) acc
      :else (recur (inc acc) (rest ssta) (rest sstb)))))
 ;;
+;; take-while solution (solution seen in the magazine)
+(defn match-length [[a b]]
+  (->> (interleave a b)
+       (partition-all 2                      ,  )
+       (take-while #(= (first %) (second %)) ,  )
+       (count                                ,  )))
+;;
 (map match-length (pairs "mississippi"))
-;;
-;;
+
+;; Finally, use all these parts to get the maximum duplication part of the string
 (defn max-dup-str [st]
   (let [max-match-pair (last (sort-by  match-length (pairs st)))]
     (clojure.string/join (take (match-length max-match-pair) (first max-match-pair)))))
