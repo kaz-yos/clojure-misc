@@ -72,8 +72,14 @@
 (map match-length (pairs "mississippi"))
 
 ;; Finally, use all these parts to get the maximum duplication part of the string
+;; sort-by version
 (defn max-dup-str [st]
   (let [max-match-pair (last (sort-by  match-length (pairs st)))]
+    (clojure.string/join (take (match-length max-match-pair) (first max-match-pair)))))
+;;
+;; max-key version
+(defn max-dup-str [st]
+  (let [max-match-pair (apply max-key match-length (pairs st))]
     (clojure.string/join (take (match-length max-match-pair) (first max-match-pair)))))
 ;;
 (max-dup-str "mississippi")
