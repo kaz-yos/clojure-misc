@@ -2,7 +2,8 @@
 ;; The book examples were shown in Haskell.
 (require 'clojure.test)
 
-;; Chapter 2
+;; Multiply by index and sum
+;;
 ;; signature: vector -> number
 ;; multiply each element of the vector with the index and add all up
 ;; (defn calc [xs]
@@ -16,7 +17,8 @@
 (clojure.test/is (= (calc [10 20 30 40 50]) 400))
 
 
-;; Chapter 3
+;; Extract the max duplicated part of the string
+;;
 ;; String -> String
 ;; Return the longest overlapping regions in the string given
 ;;
